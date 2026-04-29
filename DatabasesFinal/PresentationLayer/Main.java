@@ -29,6 +29,7 @@ public class Main {
             System.out.println("---------------------------------");
             System.out.println("1. Create a new playlist");
             System.out.println("2. Exit");
+            System.out.print("3. Get genre info");
             System.out.print("Select an option: ");
 
             String choice = scanner.nextLine();
@@ -58,6 +59,14 @@ public class Main {
                     System.out.println("Exiting system");
                     DataMgr.closeConnection();
                     return;
+                case "3": 
+                    try {
+                        System.out.print("Enter User ID: ");
+                        int userId = Integer.parseInt(scanner.nextLine());
+                        GenreStats.getGenreStats(userId);
+                    } catch (Exception e) {
+                        System.out.println("Error creating playlist: " + e.getMessage());
+                    }
                 default:
                     System.out.println("Invalid option. Please try again.");
             }
