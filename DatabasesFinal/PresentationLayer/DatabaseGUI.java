@@ -15,12 +15,12 @@ public class DatabaseGUI {
     JLabel passwordPrompt;
     JLabel usernamePrompt;
     JTextField usernameInput;
-    JTextField passwordInput;
+    JPasswordField passwordInput;
     JButton submit;
+    JButton back;
     JComboBox<String> selection;
     JLabel query;
     
-
     JLabel idPrompt;
     JLabel playlistNamePrompt;
     JTextField idInput;
@@ -34,7 +34,6 @@ public class DatabaseGUI {
 
         frame.setSize(340, 260);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
         frame.setLayout(null);
 
         usernamePrompt = new JLabel("Username: ", SwingConstants.CENTER);
@@ -47,6 +46,11 @@ public class DatabaseGUI {
         submit.setBackground(Color.green);
         submit.setBounds(105, 140, 110, 30);
         submit.addActionListener(new submitLogin());
+
+        back = new JButton("Back");
+        back.setBackground(Color.red);
+        back.setBounds(105, 180, 110, 30);
+        back.addActionListener(new backListener());
     
 
         usernameInput = new JTextField(20);
@@ -56,7 +60,7 @@ public class DatabaseGUI {
         usernameInput.setEditable(true);
         usernameInput.setBounds(90, 50, 200, 30); // Set consistent size
         
-        passwordInput = new JTextField(20);
+        passwordInput = new JPasswordField(20);
         passwordInput.setFont(new Font("Monospaced", Font.PLAIN, 12));
         passwordInput.setForeground(Color.BLACK);
         passwordInput.setBackground(Color.WHITE);
@@ -68,6 +72,7 @@ public class DatabaseGUI {
         frame.add(passwordInput);
         frame.add(usernameInput);
         frame.add(submit);
+        frame.setVisible(true);
     }
 
     
@@ -91,8 +96,9 @@ public class DatabaseGUI {
         selection.addItem("Option 3");
         selection.setBounds(60, 80, 200, 30);
 
-        ActionListener[] al = submit.getActionListeners();
-        submit.removeActionListener(al[0]);
+        for (ActionListener a : submit.getActionListeners()) {
+            submit.removeActionListener(a);
+        }
         submit.addActionListener(new selectionListener());
 
         frame.add(selection);
@@ -103,6 +109,7 @@ public class DatabaseGUI {
         frame.remove(selection);
         frame.remove(query);
         frame.repaint();
+        frame.add(back);
 
         idPrompt = new JLabel("User ID: ", SwingConstants.CENTER);
         idPrompt.setBounds(10, 50, 80, 30);
@@ -124,9 +131,11 @@ public class DatabaseGUI {
         playlistNameInput.setEditable(true);
         playlistNameInput.setBounds(110, 90, 180, 30); // Set consistent size
 
-        ActionListener[] al = submit.getActionListeners();
-        submit.removeActionListener(al[0]);
+        for (ActionListener a : submit.getActionListeners()) {
+            submit.removeActionListener(a);
+        }
         submit.addActionListener(new playlistListener());
+        back.addActionListener(new backListener());
 
         frame.add(idPrompt);
         frame.add(playlistNamePrompt);
@@ -134,24 +143,40 @@ public class DatabaseGUI {
         frame.add(playlistNameInput);
     }
 
-    class submitLogin implements ActionListener{
+    class submitLogin implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent event){
 
-            String user = usernameInput.getText();
-            String pass = passwordInput.getText();
-           try {
-            //DataMgr.initialize(user, pass);
-            System.out.println("Connected to database successfully!");
-            JOptionPane.showMessageDialog(frame, "Successfully Connected", "Login", JOptionPane.INFORMATION_MESSAGE);
-            OnLogin();
+            String user = usernameInput.getText().trim();
+            String pass = new String(passwordInput.getPassword()).trim();
 
-        } catch (Exception e) {
-            System.out.println("Connection failed: " + e.getMessage());
-            JOptionPane.showMessageDialog(frame, e.getMessage(), "Connection Error", JOptionPane.ERROR_MESSAGE);
-            
-            return;
-        }
+            // Validate input
+            if(user.isEmpty() || pass.isEmpty()){
+                JOptionPane.showMessageDialog(frame, 
+                    "Please enter database username and password.",
+                    "Missing Input",
+                    JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            try {
+                DataMgr.initialize(user, pass);  // <-- actually connect
+
+                System.out.println("Connected to database successfully!");
+                JOptionPane.showMessageDialog(frame, 
+                    "Successfully Connected", 
+                    "Login", 
+                    JOptionPane.INFORMATION_MESSAGE);
+
+                OnLogin();
+
+            } catch (Exception e) {
+                System.out.println("Connection failed: " + e.getMessage());
+                JOptionPane.showMessageDialog(frame, 
+                    e.getMessage(), 
+                    "Connection Error", 
+                    JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 
@@ -179,6 +204,26 @@ public class DatabaseGUI {
         }
     }
 
+    class backListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent event) {
+
+            frame.remove(idPrompt);
+            frame.remove(playlistNamePrompt);
+            frame.remove(idInput);
+            frame.remove(playlistNameInput);
+            frame.remove(back);
+
+            frame.getContentPane().removeAll();
+
+            frame.revalidate();
+            frame.repaint();
+
+            frame.add(submit);
+            OnLogin();
+        }
+    }
+
     class playlistListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent event){
@@ -193,6 +238,7 @@ public class DatabaseGUI {
                         controller.createPlaylist(userId, playlistName);
 
                         // Show result
+                        JOptionPane.showMessageDialog(frame, playlistName + " created successfully!", "Create Playlist", JOptionPane.INFORMATION_MESSAGE);
                         System.out.println(playlistName + " created successfully!");
 
 
