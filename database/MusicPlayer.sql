@@ -4,6 +4,8 @@ CREATE DATABASE MusicPlayer;
 
 USE MusicPlayer;
 
+SET SQL_SAFE_UPDATES = 0;
+
 CREATE TABLE IF NOT EXISTS Song (
 	SongId INT NOT NULL AUTO_INCREMENT,
     SongName VARCHAR(100) NOT NULL,
@@ -59,10 +61,16 @@ CREATE TABLE IF NOT EXISTS UserSong (
     FOREIGN KEY (SongId) REFERENCES Song(SongId) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS Playlist (
-	PlaylistId INT NOT NULL AUTO_INCREMENT,
+CREATE TABLE Playlist (
+    PlaylistId INT NOT NULL AUTO_INCREMENT,
     PlaylistName VARCHAR(100) NOT NULL,
-    PRIMARY KEY (PlaylistId)
+    UserId INT NOT NULL,
+    PRIMARY KEY (PlaylistId),
+    CONSTRAINT fk_playlist_user 
+        FOREIGN KEY (UserId) REFERENCES Users(UserId)
+        ON DELETE CASCADE,
+    CONSTRAINT unique_user_playlist 
+        UNIQUE (UserId, PlaylistName)
 );
 
 CREATE TABLE IF NOT EXISTS PlaylistSong (
@@ -89,7 +97,6 @@ CREATE TABLE IF NOT EXISTS SongBlacklist (
     FOREIGN KEY (SongId) REFERENCES Song(SongId) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-
 -- Stored Procedures
 
 DROP PROCEDURE IF EXISTS CreatePlaylist; -- add playlist
@@ -115,9 +122,8 @@ DELIMITER $$
 -- returns the playlist ID for further use
 CREATE PROCEDURE CreatePlaylist(IN in_UserId INT, IN in_PlaylistName VARCHAR(100), OUT out_PlaylistId INT)
 BEGIN
-    INSERT INTO Playlist (PlaylistName) VALUES (in_PlaylistName);
+    INSERT INTO Playlist (PlaylistName, UserId) VALUES (in_PlaylistName, in_UserId);
     SET out_PlaylistId = LAST_INSERT_ID();
-    INSERT INTO UserPlaylist (PlaylistId, UserId) VALUES (out_PlaylistId, in_UserId);
 END$$
 
 -- adds a song to a playlist
