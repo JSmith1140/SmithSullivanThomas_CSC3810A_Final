@@ -1,0 +1,19 @@
+@startuml Workflow One Activity Diagram
+title Workflow One: User Creates Playlist
+
+start
+
+:User selects New Playlist;
+
+:Enter User ID and Playlist name;
+
+while (Playlist name exists?) is (Yes)
+    :ERROR: Playlist name already used;
+    :Re-enter Playlist name;
+endwhile (No)
+
+:Call CreatePlaylist stored procedure;
+:Playlist created successfully!;
+
+stop
+@enduml
