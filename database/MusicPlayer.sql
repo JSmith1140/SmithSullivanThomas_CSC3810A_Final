@@ -143,10 +143,12 @@ BEGIN
 END $$
 
 -- get playlists that a user has
-CREATE PROCEDURE GetPlaylistsByUser(IN in_UserId INT)
+CREATE PROCEDURE GetPlaylistsByUser(IN p_userId INT)
 BEGIN
-    SELECT p.PlaylistId, p.PlaylistName FROM Playlist p JOIN UserPlaylist up ON up.PlaylistId = p.PlaylistId WHERE up.UserId = in_UserId ORDER BY p.PlaylistName;
-END$$
+    SELECT PlaylistId, PlaylistName
+    FROM Playlist
+    WHERE UserId = p_userId;
+END $$
 
 -- adds a play count for a song (-1 for SecondsPlayed if full duration of song)
 CREATE PROCEDURE SongPlay(IN in_UserId INT, IN in_SongId INT, IN in_SecondsPlayed INT)
@@ -235,6 +237,152 @@ CREATE PROCEDURE GetSongs()
 BEGIN
 	SELECT SongId, SongName FROM Song;
 END $$
+
+DELIMITER $$
+
+CREATE PROCEDURE GetGenresByArtistName (IN inputArtistName VARCHAR(100))
+BEGIN
+    SELECT DISTINCT g.GenreId, g.GenreName
+    FROM Artist a
+    INNER JOIN ArtistSong asg ON a.ArtistId = asg.ArtistId
+    INNER JOIN Song s ON asg.SongId = s.SongId
+    INNER JOIN SongGenre sg ON s.SongId = sg.SongId
+    INNER JOIN Genre g ON sg.GenreId = g.GenreId
+    WHERE a.ArtistName = inputArtistName;
+END$$
+
+CREATE PROCEDURE GetCandidateSongs(
+    IN p_userId INT,
+    IN p_a1 VARCHAR(100),
+    IN p_a2 VARCHAR(100),
+    IN p_a3 VARCHAR(100)
+)
+BEGIN
+
+    SELECT
+        s.SongId,
+        s.SongName,
+
+        MAX(a.ArtistId) AS ArtistId,
+        MAX(a.ArtistName) AS ArtistName,
+
+        MAX(sg.GenreId) AS GenreId,
+
+        CASE 
+            WHEN MAX(CASE 
+                WHEN a.ArtistName IN (p_a1, p_a2, p_a3) THEN 1 
+                ELSE 0 
+            END) = 1
+            THEN 'ARTIST'
+            ELSE 'GENRE'
+        END AS Source,
+
+        COALESCE(MAX(us.PlayCount), 0) AS UserPlays,
+        COALESCE(MAX(us.SkipCount), 0) AS SkipCount,
+
+        CASE 
+            WHEN MAX(us.LastPlayed) IS NULL THEN -1
+            ELSE DATEDIFF(CURDATE(), MAX(us.LastPlayed))
+        END AS DaysSinceLastPlayed
+
+    FROM Song s
+
+    LEFT JOIN ArtistSong asg ON s.SongId = asg.SongId
+    LEFT JOIN Artist a ON a.ArtistId = asg.ArtistId
+
+    LEFT JOIN SongGenre sg ON s.SongId = sg.SongId
+
+    LEFT JOIN (
+        SELECT 
+            SongId,
+            SUM(Plays) AS PlayCount,
+            SUM(TimesSkipped) AS SkipCount,
+            MAX(LastPlayed) AS LastPlayed
+        FROM UserSong
+        WHERE UserId = p_userId
+        GROUP BY SongId
+    ) us ON us.SongId = s.SongId
+
+    WHERE s.SongId IN (
+
+        SELECT DISTINCT s2.SongId
+        FROM Song s2
+        JOIN ArtistSong asg2 ON s2.SongId = asg2.SongId
+        JOIN Artist a2 ON a2.ArtistId = asg2.ArtistId
+        WHERE a2.ArtistName IN (p_a1, p_a2, p_a3)
+
+        UNION
+
+        SELECT DISTINCT s3.SongId
+        FROM Song s3
+        JOIN SongGenre sg3 ON s3.SongId = sg3.SongId
+        WHERE sg3.GenreId IN (
+            SELECT DISTINCT sg2.GenreId
+            FROM Artist ar
+            JOIN ArtistSong as2 ON ar.ArtistId = as2.ArtistId
+            JOIN SongGenre sg2 ON sg2.SongId = as2.SongId
+            WHERE ar.ArtistName IN (p_a1, p_a2, p_a3)
+        )
+    )
+
+    GROUP BY s.SongId, s.SongName;
+
+END $$
+
+CREATE PROCEDURE GetBlacklistIds(IN in_UserId INT)
+BEGIN
+    SELECT SongId FROM SongBlacklist
+    WHERE UserId = in_UserId;
+END $$
+
+CREATE PROCEDURE GetUserArtistScores(IN in_UserId INT)
+BEGIN
+    SELECT 
+        a.ArtistId,
+        SUM(us.Plays) - SUM(us.TimesSkipped) AS Score
+    FROM UserSong us
+    INNER JOIN ArtistSong asl ON us.SongId = asl.SongId
+    INNER JOIN Artist a ON a.ArtistId = asl.ArtistId
+    WHERE us.UserId = in_UserId
+    GROUP BY a.ArtistId;
+END $$
+
+CREATE PROCEDURE GetUserGenreScores(IN in_UserId INT)
+BEGIN
+    SELECT 
+        g.GenreId,
+        SUM(us.Plays) - SUM(us.TimesSkipped) AS Score
+    FROM UserSong us
+    INNER JOIN SongGenre sg ON us.SongId = sg.SongId
+    INNER JOIN Genre g ON g.GenreId = sg.GenreId
+    WHERE us.UserId = in_UserId
+    GROUP BY g.GenreId;
+END $$
+
+DROP PROCEDURE IF EXISTS GetArtistIdBySong;
+
+DELIMITER $$
+
+CREATE PROCEDURE GetArtistIdBySong(IN in_SongId INT)
+BEGIN
+    SELECT ArtistId 
+    FROM ArtistSong
+    WHERE SongId = in_SongId
+    LIMIT 1;
+END $$
+
+DROP PROCEDURE IF EXISTS GetGenreIdBySong;
+
+DELIMITER $$
+
+CREATE PROCEDURE GetGenreIdBySong(IN in_SongId INT)
+BEGIN
+    SELECT GenreId 
+    FROM SongGenre
+    WHERE SongId = in_SongId
+    LIMIT 1;
+END $$
+
 
 DELIMITER ;
 
