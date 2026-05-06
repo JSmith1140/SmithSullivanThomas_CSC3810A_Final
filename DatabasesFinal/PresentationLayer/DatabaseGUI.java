@@ -110,7 +110,7 @@ public class DatabaseGUI {
 
         selection = new JComboBox<String>();
         selection.addItem("New Playlist");
-        selection.addItem("Get Stats");
+        selection.addItem("Get Playlist Stats");
         selection.addItem("Auto Playlist Builder");
         selection.addItem("Purge Playlist");
         selection.addItem("Join Playlists");
@@ -583,7 +583,7 @@ public class DatabaseGUI {
             if(selection.getSelectedItem() == "New Playlist"){
                 System.out.println("Selected New Playlist");
                 OnPlaylist();
-            } else if(selection.getSelectedItem() == "Get Stats"){
+            } else if(selection.getSelectedItem() == "Get Playlist Stats"){
                 System.out.println("Selected Genre Stats");
                 OnPlaylistStats();
             } else if (selection.getSelectedItem() == "Auto Playlist Builder"){
