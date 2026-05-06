@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import DatabasesFinal.BLL.PlaylistStat;
 import DatabasesFinal.BLL.SongCandidate;
 
 import java.sql.CallableStatement;
@@ -59,16 +60,6 @@ public class PlaylistDataProvider {
 
             stmt.execute();
         }
-    }
-
-    public ResultSet getGenresByArtist(String artistName) throws SQLException {
-        Connection conn = DataMgr.getConnection();
-        String sql = "{CALL GetGenresByArtistName(?)}";
-
-        CallableStatement stmt = conn.prepareCall(sql);
-        stmt.setString(1, artistName);
-
-        return stmt.executeQuery();
     }
 
     public List<SongCandidate> getCandidateSongs(int userId, String artist1, String artist2, String artist3) throws SQLException {
@@ -204,4 +195,30 @@ public class PlaylistDataProvider {
 
         return 0;
     }
+
+    public List<PlaylistStat> getPlaylistStats(int userId, String playlistName) throws SQLException {
+
+        Connection conn = DataMgr.getConnection();
+        String sql = "{CALL GetPlaylistStats(?, ?)}";
+
+        List<PlaylistStat> list = new ArrayList<>();
+
+        try (CallableStatement stmt = conn.prepareCall(sql)) {
+            stmt.setInt(1, userId);
+            stmt.setString(2, playlistName);
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                list.add(new PlaylistStat(
+                    rs.getString("SongName"),
+                    rs.getInt("Plays"),
+                    rs.getInt("TimesSkipped"),
+                    rs.getDate("LastPlayed")
+                ));
+            }
+        }
+
+        return list;
     }
+}
