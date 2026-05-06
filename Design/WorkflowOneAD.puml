@@ -1,19 +1,32 @@
 @startuml Workflow One Activity Diagram
-title Workflow One: User Creates Playlist
+title Workflow 1: Create Playlist
 
 start
 
-:User selects New Playlist;
+:User selects "New Playlist";
 
-:Enter User ID and Playlist name;
+:User clicks Submit;
 
-while (Playlist name exists?) is (Yes)
-    :ERROR: Playlist name already used;
-    :Re-enter Playlist name;
-endwhile (No)
+repeat :Enter UserId and Playlist Name;
+    :Click Submit;
 
-:Call CreatePlaylist stored procedure;
-:Playlist created successfully!;
+    if (Input valid?) then (Yes)
+
+        :Call PlaylistController.createPlaylist(userId, playlistName);
+        :Controller calls PlaylistDataProvider.createPlaylist();
+        :DAL calls stored procedure CreatePlaylist;
+        :Database creates playlist;
+        :Return playlistId;
+
+        :Show success message;
+    else (No)
+        :Show error message;
+    endif
+
+' *Won't let me put text on the merge diamond*
+repeat while (User wants to create another playlist?)
+
+:User clicks Back when done;
 
 stop
 @enduml
