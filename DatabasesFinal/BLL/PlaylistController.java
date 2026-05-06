@@ -1,5 +1,7 @@
 package DatabasesFinal.BLL;
 
+import java.util.List;
+
 import DatabasesFinal.DAL.GenreStatsDataProvider;
 import DatabasesFinal.DAL.PlaylistDataProvider;
 
@@ -22,5 +24,9 @@ public class PlaylistController {
 
     public void genreStats(int userId) throws Exception {
         GenreStatsDataProvider.getGenreStats(userId);
+    }
+
+    public List<PlaylistStat> playlistStats(int userId, String playlistName) throws Exception {
+        return playlistDP.getPlaylistStats(userId, playlistName);
     }
 }
