@@ -1,0 +1,29 @@
+@startuml Workflow Two Sequence Diagram
+title Workflow 2: Display Playlist Stats
+
+actor User
+participant "DatabaseGUI (Presentation Layer)" as GUI
+participant "PlaylistController (BLL)" as PC
+participant "PlaylistDataProvider (DAL)" as DP
+database "Database" as DB
+
+User -> GUI : Select "Get Playlist Stats"
+User -> GUI : Enter UserId + PlaylistName
+User -> GUI : Click Load
+
+GUI -> PC : playlistStats(userId, playlistName)
+PC -> DP : getPlaylistStats(userId, playlistName)
+
+DP -> DB : CALL GetPlaylistStats(userId, playlistName)
+DB --> DP : ResultSet (SongName, Plays, Skips, LastPlayed)
+
+DP -> DP : Convert ResultSet → List<PlaylistStat>
+DP --> PC : List<PlaylistStat>
+
+PC --> GUI : List<PlaylistStat>
+
+GUI -> GUI : showStatsTable(list)
+GUI -> GUI : Render JTable (Song, Plays, Skips, LastPlayed)
+GUI -> User: Display Stats Table
+
+@enduml

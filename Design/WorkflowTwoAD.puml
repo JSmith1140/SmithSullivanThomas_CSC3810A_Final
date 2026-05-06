@@ -1,0 +1,37 @@
+@startuml Workflow Two Activity Diagram 
+title Workflow 2: Display Playlist Stats 
+
+start 
+
+:User selects "Get Playlist Stats";
+
+:User clicks Submit;
+
+:User enters UserID and Playlist Name;
+
+:User clicks Load;
+
+while (Playlist Name Valid?) is (No)
+    :ERROR: User does not have a playlist with that name;
+    :Re-enter Playlist name;
+endwhile (Yes)
+
+:Call PlaylistController.playlistStats(userId, playlistName);
+
+:Controller calls PlaylistDataProvider.getPlaylistStats();
+
+:DAL calls stored procedure GetPlaylistStats;
+
+:Database returns ResultSet;
+
+:Convert ResultSet -> List<PlaylistStat>;
+
+:Return list to Controller;
+
+:Return list to GUI;
+
+:Display Playlist Stats;
+
+:User clicks Back when done;
+stop
+@enduml
