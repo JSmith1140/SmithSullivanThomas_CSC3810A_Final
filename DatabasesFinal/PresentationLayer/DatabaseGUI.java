@@ -11,7 +11,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import DatabasesFinal.BLL.AutoPlaylistController;
+import DatabasesFinal.BLL.JoinPlaylistController;
 import DatabasesFinal.BLL.ScoredSong;
+import DatabasesFinal.BLL.SongCandidate;
 
 import java.util.List;
 
@@ -488,6 +490,141 @@ public class DatabaseGUI {
         artistDisplay.setText(song.getSong().getArtist());
     }
 
+      public void OnJoinPlaylists() {
+        frame.getContentPane().removeAll();
+        frame.repaint();
+
+        JLabel user1Label = new JLabel("User 1 ID:", SwingConstants.CENTER);
+        user1Label.setBounds(50, 30, 100, 30);
+
+        JTextField user1Input = new JTextField();
+        user1Input.setBounds(160, 30, 180, 30);
+
+        JLabel playlist1Label = new JLabel("Playlist 1 ID:", SwingConstants.CENTER);
+        playlist1Label.setBounds(50, 70, 100, 30);
+
+        JTextField playlist1Input = new JTextField();
+        playlist1Input.setBounds(160, 70, 180, 30);
+
+        JLabel user2Label = new JLabel("User 2 ID:", SwingConstants.CENTER);
+        user2Label.setBounds(50, 110, 100, 30);
+
+        JTextField user2Input = new JTextField();
+        user2Input.setBounds(160, 110, 180, 30);
+
+        JLabel playlist2Label = new JLabel("Playlist 2 ID:", SwingConstants.CENTER);
+        playlist2Label.setBounds(50, 150, 100, 30);
+
+        JTextField playlist2Input = new JTextField();
+        playlist2Input.setBounds(160, 150, 180, 30);
+
+        JLabel newNameLabel = new JLabel("New Playlist Name:", SwingConstants.CENTER);
+        newNameLabel.setBounds(30, 190, 130, 30);
+
+        JTextField newNameInput = new JTextField();
+        newNameInput.setBounds(160, 190, 180, 30);
+
+        JButton joinBtn = new JButton("Join");
+        joinBtn.setBounds(140, 230, 150, 35);
+
+        JButton backBtn = new JButton("Back");
+        backBtn.setBounds(140, 270, 150, 30);
+
+        joinBtn.addActionListener(e -> {
+            try {
+                int u1 = Integer.parseInt(user1Input.getText());
+                int p1 = Integer.parseInt(playlist1Input.getText());
+                int u2 = Integer.parseInt(user2Input.getText());
+                int p2 = Integer.parseInt(playlist2Input.getText());
+                String newName = newNameInput.getText().trim();
+
+                if (newName.isEmpty()) {
+                    throw new Exception("Enter a new playlist name.");
+                }
+
+                JoinPlaylistController controller = new JoinPlaylistController();
+
+                List<SongCandidate> songs = controller.buildJointPlaylist(u1, u2, p1, p2);
+
+                PlaylistController pc = new PlaylistController();
+                int newPlaylistId = pc.createPlaylist(u1, newName);
+                int newPlaylistId2 = pc.createPlaylist(u2, newName);
+
+                for (SongCandidate song : songs) {
+                    pc.addSongToPlaylist(newPlaylistId, song.getSongId());
+                    pc.addSongToPlaylist(newPlaylistId2, song.getSongId());
+                }
+                showJoinResultsScreen(songs);
+
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(frame, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        backBtn.addActionListener(e -> {
+            frame.getContentPane().removeAll();
+            frame.add(submit);
+            OnLogin();
+        });
+
+        frame.add(user1Label);
+        frame.add(user1Input);
+        frame.add(playlist1Label);
+        frame.add(playlist1Input);
+        frame.add(user2Label);
+        frame.add(user2Input);
+        frame.add(playlist2Label);
+        frame.add(playlist2Input);
+        frame.add(newNameLabel);
+        frame.add(newNameInput);
+        frame.add(joinBtn);
+        frame.add(backBtn);
+
+        frame.revalidate();
+        frame.repaint();
+    }
+
+    public void showJoinResultsScreen(List<SongCandidate> songs) {
+
+        frame.getContentPane().removeAll();
+        frame.repaint();
+
+        JLabel title = new JLabel("Joined Playlist", SwingConstants.CENTER);
+        title.setBounds(90, 20, 240, 30);
+        title.setFont(new Font("Segoe UI", Font.BOLD, 18));
+
+        JTextArea textArea = new JTextArea();
+        textArea.setEditable(false);
+
+        if (songs.isEmpty()) {
+            textArea.setText("No songs matched both users.");
+        } else {
+            textArea.append("Songs in new playlist:\n\n");
+            for (SongCandidate song : songs) {
+                textArea.append(song.getSongName() + "\n");
+            }
+        }
+
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        scrollPane.setBounds(60, 60, 300, 150);
+
+        JButton doneBtn = new JButton("Done");
+        doneBtn.setBounds(130, 220, 150, 35);
+
+        doneBtn.addActionListener(e -> {
+            frame.getContentPane().removeAll();
+            frame.add(submit);
+            OnLogin();
+        });
+
+        frame.add(title);
+        frame.add(scrollPane);
+        frame.add(doneBtn);
+
+        frame.revalidate();
+        frame.repaint();
+    }
+
     class acceptListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -580,20 +717,21 @@ public class DatabaseGUI {
         @Override
         public void actionPerformed(ActionEvent event){
             try {
-            if(selection.getSelectedItem() == "New Playlist"){
+            if("New Playlist".equals(selection.getSelectedItem())){
                 System.out.println("Selected New Playlist");
                 OnPlaylist();
-            } else if(selection.getSelectedItem() == "Get Playlist Stats"){
-                System.out.println("Selected Genre Stats");
+            } else if("Get Playlist Stats".equals(selection.getSelectedItem())){
+                System.out.println("Selected Get Playlist Stats");
                 OnPlaylistStats();
-            } else if (selection.getSelectedItem() == "Auto Playlist Builder"){
+            } else if ("Auto Playlist Builder".equals(selection.getSelectedItem())){
                 System.out.println("Selected Auto Playlist Builder");
                 OnPlaylistBuilder();
-            } else if (selection.getSelectedItem() == "Purge Playlist") {
+            } else if ("Purge Playlist".equals(selection.getSelectedItem())) {
                 System.out.println("Selected Purge Playlist");
                 OnPurgePlaylist();
-            } else if (selection.getSelectedItem() == "Join Playlists") {
+            } else if ("Join Playlists".equals(selection.getSelectedItem())) {
                 System.out.println("Selected Join Playlists");
+                OnJoinPlaylists();
             }
 
         } catch (Exception e) {
