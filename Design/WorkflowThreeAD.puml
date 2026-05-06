@@ -1,0 +1,71 @@
+@startuml Workflow Three Activity Diagram
+title Workflow 3: Auto Playlist Builder (Activity Diagram)
+
+start
+
+:User selects "Auto Playlist Builder";
+:User clicks Submit;
+
+:Enter UserId + 3 Artists;
+:User clicks Submit;
+
+:Controller calls AutoPlaylistController.buildAutoPlaylist();
+
+:DAL fetches candidate songs;
+
+:DAL fetches blacklist;
+
+:Initialize empty score list;
+
+repeat :Take next SongCandidate;
+
+    if (Song in blacklist?) then (Yes)
+        :Skip song;
+    else (No)
+
+        :Initialize score = 0;
+
+        :Apply artist/genre scoring;
+
+        :Apply play count scoring;
+
+        :Apply skip scoring;
+
+        :Apply last played scoring;
+
+        :Create ScoredSong;
+
+        :Add to result list;
+    endif
+
+' Cannot put text on the merge diamond
+repeat while (More candidates?)
+
+:Sort songs by score (descending);
+
+:Return ranked ScoredSong list;
+
+:Display first song to user;
+
+repeat :Display song + score;
+
+    if (User accepts song?) then (Yes)
+        :Add song to playlist;
+    else (No)
+        :Blacklist song;
+    endif
+
+    if (Continue playlist building?) then (Yes)
+        :Load next song;
+    else (No)
+        :Finish playlist early;
+        stop
+    endif
+
+' Cannot put text on the merge diamond
+repeat while (More songs available?)
+
+:Finish playlist;
+
+stop
+@enduml

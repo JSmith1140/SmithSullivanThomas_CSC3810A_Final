@@ -1,0 +1,63 @@
+@startuml Workflow Three Sequence Diagram
+title Workflow 3: Auto Playlist Builder (Sequence Diagram)
+
+actor User
+participant "DatabaseGUI (Presentation Layer)" as GUI
+participant "AutoPlaylistController (BLL)" as APC
+participant "PlaylistDataProvider (DAL)" as DP
+database "Database" as DB
+
+== Start Auto Playlist ==
+
+User -> GUI : Select "Auto Playlist Builder"
+User -> GUI : Enter id + 3 artist names
+User -> GUI : Clicks submit
+
+GUI -> APC : buildAutoPlaylist(userId, a1, a2, a3)
+
+APC -> DP : getCandidateSongs(userId, artists)
+DP -> DB : CALL GetCandidateSongs
+DB --> DP : ResultSet rows
+DP --> APC : List<SongCandidate>
+
+APC -> DP : getBlacklist(userId)
+DP -> DB : CALL GetBlacklistIds
+DB --> DP : blacklist set
+DP --> APC : blacklist
+
+APC -> APC : filter + score songs
+APC --> GUI : List<ScoredSong>
+
+== Recommendation Loop ==
+
+loop For each recommended song
+
+    GUI -> User : Show song + score
+
+    alt User accepts song
+        User -> GUI : Accept
+        GUI -> DP : addSongToPlaylist(playlistId, songId)
+        DP -> DB : CALL AddSongToPlaylist
+        DB --> DP : success
+        DP --> GUI : success
+    else User rejects song
+        User -> GUI : Reject
+        GUI -> DP : blacklistSong(userId, songId)
+        DP -> DB : CALL BlacklistSong
+        DB --> DP : success
+        DP --> GUI : success
+    end
+
+    opt User finishes early
+        User -> GUI : Finish playlist
+        GUI -> User : Exit loop
+        break
+    end
+
+end
+
+== Finish ==
+
+GUI -> User : Show "Playlist Complete"
+
+@enduml
