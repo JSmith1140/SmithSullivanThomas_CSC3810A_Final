@@ -1,0 +1,86 @@
+@startuml Workflow Four Activity Diagram
+title Workflow 4: Playlist Purging Mechanism
+
+start 
+
+:User selects "Purge Playlist";
+:User clicks submit;
+
+repeat :Enter UserId + PlaylistId;
+:User clicks Purge;
+
+if (Playlist belongs to user?) then (Yes)
+    break
+else (No)
+endif
+
+' Cannot add text to merge diamond
+repeat while (Invalid playlist)
+
+:PurgeController.purgePlaylist(userId, playlistId);
+
+:PurgeDataProvider.getPlaylistsByUser(userId);
+
+:Get playlist songs;
+:Get song stats;
+:Get genre stats;
+:Get artist stats;
+:Get blacklist;
+
+:songsToRemove = empty list;
+
+repeat :For each song in playlist;
+' Diamonds are to merge cannot place text on them
+    if (No song stats?) then (Yes)
+        :Mark song for removal;
+    else (No)
+
+        if (Too many skips?) then (Yes)
+            :Mark song for removal;
+        else (No)
+
+            if (Not played in X months?) then (Yes)
+                :Mark song for removal;
+            else (No)
+
+                if (Skip ratio too high?) then (Yes)
+                    :Mark song for removal;
+                endif
+
+            endif
+        endif
+    endif
+
+repeat while (More songs?)
+
+repeat :Genre filtering;
+
+    if (No liked genre found?) then (Yes)
+        :Mark song for removal;
+    endif
+
+repeat while (More songs?)
+
+repeat :Artist filtering;
+
+    if (No liked artist found?) then (Yes)
+        :Mark song for removal;
+    endif
+
+repeat while (More songs?)
+
+repeat :Blacklist filtering;
+
+    if (Song in blacklist?) then (Yes)
+        :Mark song for removal;
+    endif
+
+repeat while (More songs?)
+
+:Remove songs from DB;
+:Return removedSongs list;
+
+:GUI displays purge results;
+
+stop
+@enduml

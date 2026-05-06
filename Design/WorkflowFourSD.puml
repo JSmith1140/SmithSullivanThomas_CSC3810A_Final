@@ -1,0 +1,75 @@
+@startuml Workflow Four Sequence Diagram
+title Workflow 4: Playlist Purging Mechanism
+
+actor User
+participant "DatabaseGUI (Presentation Layer)" as GUI
+participant "PurgeController (BLL)" as PC
+participant "PurgeDataProvider (DAL)" as DP
+database DB
+
+User -> GUI : Select "Purge Playlist"
+User -> GUI : Enter UserId + PlaylistId
+User -> GUI : Click "Purge"
+
+alt Playlist not owned by user
+    PC --> GUI : Error (invalid playlist ownership)
+    GUI -> User : Show error message
+else Playlist valid
+
+GUI -> PC : purgePlaylist(playlistId, userId)
+
+PC -> DP : getPlaylistsByUser(userId)
+DP -> DB : CALL GetPlaylistsByUser
+DB --> DP : ResultSet
+DP --> PC : Map<PlaylistId, PlaylistName>
+
+    PC -> DP : getPlaylistSongs(playlistId)
+    DP -> DB : CALL GetPlaylistSongs
+    DB --> DP : ResultSet
+    DP --> PC : Map<SongId, SongName>
+
+    PC -> DP : getSongStats(userId)
+    DP -> DB : CALL GetUserSongStats
+    DB --> DP : ResultSet
+    DP --> PC : Song stats map
+
+    PC -> DP : getGenreStats(userId)
+    DP -> DB : CALL GetUserGenreStats
+    DB --> DP : ResultSet
+    DP --> PC : Genre stats map
+
+    PC -> DP : getArtistStats(userId)
+    DP -> DB : CALL GetUserArtistStats
+    DB --> DP : ResultSet
+    DP --> PC : Artist stats map
+
+    PC -> DP : getBlacklist(userId)
+    DP -> DB : CALL GetBlacklist
+    DB --> DP : ResultSet
+    DP --> PC : Blacklist map
+
+    loop For each song in playlist
+        PC -> PC : Apply purge rules
+        note right
+        - no stats
+        - raw skip count high
+        - skip ratio
+        - last played in X months
+        - genre filter
+        - artist filter
+        - blacklist filter
+        end note
+    end
+
+    PC -> DP : removeSongFromPlaylist(playlistId, songId)*
+
+    DP -> DB : CALL RemoveSongFromPlaylist
+    DB --> DP : success
+
+    DP --> PC : confirm removal
+
+    PC --> GUI : List<String> removedSongs
+    GUI -> User : Show purge results screen
+end
+
+@enduml
