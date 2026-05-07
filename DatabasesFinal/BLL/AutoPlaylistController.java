@@ -7,6 +7,15 @@ public class AutoPlaylistController {
 
     private PlaylistDataProvider dp = new PlaylistDataProvider();
 
+    /***
+     * method to buildAutoPlaylist
+     * @param userId
+     * @param a1
+     * @param a2
+     * @param a3
+     * @return
+     * @throws Exception
+     */
     public List<ScoredSong> buildAutoPlaylist(int userId, String a1, String a2, String a3) throws Exception {
 
         // Get candidate songs
@@ -68,7 +77,7 @@ public class AutoPlaylistController {
 
             // give or take away from last time played song based on how long its been
             if (days == -1) {
-                score += 20; // give boost to never played songs
+                score += 10; // give boost to never played songs
             }
             else if (days >= 365) {
                 score -= 40;
