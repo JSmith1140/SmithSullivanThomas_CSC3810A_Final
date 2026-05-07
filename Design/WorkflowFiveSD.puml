@@ -1,0 +1,59 @@
+@startuml Workflow Five Sequence Diagram
+title Workflow 5: Joined Playlist
+
+actor User
+participant "DatabaseGUI (Presentation Layer)" as GUI
+participant "JoinPlaylistController (BLL)" as JPC
+participant "PlaylistController (DAL)" as PC
+database DB
+
+User -> GUI: Select "Join Playlists"
+User -> GUI : Enter users, playlists,\nand new playlist name
+
+User -> GUI : Click Join
+
+GUI -> JPC : buildJointPlaylist(u1,u2,p1,p2)
+
+JPC -> DB : Fetch playlist1 songs
+DB -> JPC : playlist1 data
+
+JPC -> DB : Fetch playlist2 songs
+DB -> JPC : playlist2 data
+
+JPC -> DB : Fetch user1 song stats
+DB -> JPC : stats1
+
+JPC -> DB : Fetch user2 song stats
+DB -> JPC : stats2
+
+loop For each unique song
+    JPC -> JPC : Check:\n- skips\n- skip ratio\n- plays\n- last played
+
+    alt Song passes checks
+        JPC -> JPC : Create SongCandidate
+    else Song fails checks
+        JPC -> JPC : Reject song
+    end
+end
+
+JPC -> GUI : List<SongCandidate>
+
+GUI -> PC : createPlaylist(user1,newName)
+PC -> DB : INSERT playlist
+DB -> PC : playlistId1
+
+GUI -> PC : createPlaylist(user2,newName)
+PC -> DB : INSERT playlist
+DB -> PC : playlistId2
+
+loop For each accepted song
+    GUI -> PC : addSongToPlaylist(playlistId1,songId)
+    PC -> DB : INSERT PlaylistSong
+
+    GUI -> PC : addSongToPlaylist(playlistId2,songId)
+    PC -> DB : INSERT PlaylistSong
+end
+
+GUI -> User : Display joined playlist songs
+
+@enduml

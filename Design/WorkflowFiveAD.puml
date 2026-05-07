@@ -1,0 +1,70 @@
+@startuml Workflow Five Activity Diagram
+title Workflow 5: Joined Playlist
+
+start
+
+:User selects "Join Playlists" screen;
+:User clicks Submit;
+
+:Enter User1 ID;
+:Enter Playlist1 ID;
+:Enter User2 ID;
+:Enter Playlist2 ID;
+:Enter New Playlist Name;
+
+:User clicks Join;
+
+:GUI calls JoinPlaylistController.buildJointPlaylist();
+
+:Fetch Playlist 1 songs;
+:Fetch Playlist 2 songs;
+
+:Fetch User1 song stats;
+:Fetch User2 song stats;
+
+:Combine all unique songs from both playlists into hashset;
+
+while (More songs to check?) is (yes)
+
+    :Get song stats for both users;
+
+    if (Song too old?) then (yes)
+        :Reject song;
+    else (no)
+
+        if (Too many skips?) then (yes)
+            :Reject song;
+        else (no)
+
+            if (Skip ratio too high?) then (yes)
+                :Reject song;
+            else (no)
+
+                if (Both users plays >= threshold?) then (no)
+                    :Reject song;
+                else (yes)
+                    :Add to finalSongs list;
+' Cannot put text on merge diamonds
+                endif
+            endif
+        endif
+    endif
+
+endwhile (no)
+
+:Return List<SongCandidate>;
+
+:GUI creates playlist for User1;
+:GUI creates playlist for User2;
+
+while (More accepted songs?) is (yes)
+
+    :Add song to User1 playlist;
+    :Add song to User2 playlist;
+
+endwhile (no)
+
+:Show joined playlist results screen;
+
+stop
+@enduml
