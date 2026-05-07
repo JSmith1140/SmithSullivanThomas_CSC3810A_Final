@@ -8,6 +8,13 @@ public class PlaylistStat {
     private int skips;
     private Date lastPlayed;
 
+    /***
+     * playlist stat constructor
+     * @param songName
+     * @param plays
+     * @param skips
+     * @param lastPlayed
+     */
     public PlaylistStat(String songName, int plays, int skips, Date lastPlayed) {
         this.songName = songName;
         this.plays = plays;
@@ -15,8 +22,8 @@ public class PlaylistStat {
         this.lastPlayed = lastPlayed;
     }
 
-    public String getSongName() { return songName; }
-    public int getPlays() { return plays; }
-    public int getSkips() { return skips; }
-    public Date getLastPlayed() { return lastPlayed; }
+    public String getSongName() { return songName; } // get song name
+    public int getPlays() { return plays; } // get plays
+    public int getSkips() { return skips; } // get skips
+    public Date getLastPlayed() { return lastPlayed; } // get last played
 }
