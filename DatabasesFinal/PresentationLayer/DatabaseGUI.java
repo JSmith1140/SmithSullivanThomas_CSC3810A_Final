@@ -1,4 +1,5 @@
 package DatabasesFinal.PresentationLayer;
+
 import java.awt.*;
 import javax.swing.*;
 
@@ -27,7 +28,7 @@ public class DatabaseGUI {
     JButton back;
     JComboBox<String> selection;
     JLabel query;
-    
+
     JLabel idPrompt;
     JLabel playlistNamePrompt;
     JTextField idInput;
@@ -40,7 +41,6 @@ public class DatabaseGUI {
     JTextField artist2Input;
     JTextField artist3Input;
 
-
     List<ScoredSong> recommendations;
     int currentIndex = 0;
     int currentPlaylistId;
@@ -51,30 +51,39 @@ public class DatabaseGUI {
     JButton rejectBtn;
     JButton finishBtn;
 
-    public DatabaseGUI(){
+    public DatabaseGUI() {
+        // cross-platform look so that mac & windows look the same
+        try {
+            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         frame = new JFrame("Music Player DB");
         frame.setBackground(Color.gray);
 
-        frame.setSize(440, 360);
+        frame.setSize(560, 460);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        // center the window on screen
+        frame.setLocationRelativeTo(null);
         frame.setLayout(null);
 
         usernamePrompt = new JLabel("Username: ", SwingConstants.CENTER);
-        usernamePrompt.setBounds(50, 50, 80, 30);
+        usernamePrompt.setBounds(100, 100, 90, 30);
         passwordPrompt = new JLabel("Password: ", SwingConstants.CENTER);
-        passwordPrompt.setBounds(50, 90, 80, 30);
+        passwordPrompt.setBounds(100, 145, 90, 30);
 
         submit = new JButton("Submit");
         submit.setBackground(Color.green);
         submit.setBorder(BorderFactory.createLineBorder(new Color(39, 174, 96), 3, false));
-        submit.setBounds(145, 140, 110, 30);
+        submit.setBounds(210, 210, 130, 35);
         submit.addActionListener(new submitLogin());
 
         back = new JButton("Back");
         back.setBackground(Color.red);
         back.setBorder(BorderFactory.createLineBorder(new Color(192, 57, 43), 3, false));
-        back.setBounds(145, 180, 110, 30);
+        back.setBounds(210, 255, 130, 35);
         back.addActionListener(new backListener());
 
         usernameInput = new JTextField(20);
@@ -82,16 +91,16 @@ public class DatabaseGUI {
         usernameInput.setForeground(Color.BLACK);
         usernameInput.setBackground(Color.WHITE);
         usernameInput.setEditable(true);
-        usernameInput.setBounds(130, 50, 200, 30); // Set consistent size
-        
+        usernameInput.setBounds(200, 100, 220, 30); // set consistent width with password input
+
         passwordInput = new JPasswordField(20);
         passwordInput.setFont(new Font("Monospaced", Font.PLAIN, 12));
         passwordInput.setForeground(Color.BLACK);
         passwordInput.setBackground(Color.WHITE);
         passwordInput.setEditable(true);
-        passwordInput.setBounds(130, 90, 200, 30); // Set consistent size
-        
-        frame.add(usernamePrompt); 
+        passwordInput.setBounds(200, 145, 220, 30); // set consistent width with username input
+
+        frame.add(usernamePrompt);
         frame.add(passwordPrompt);
         frame.add(passwordInput);
         frame.add(usernameInput);
@@ -99,7 +108,7 @@ public class DatabaseGUI {
         frame.setVisible(true);
     }
 
-    public void OnLogin(){
+    public void OnLogin() {
         frame.remove(passwordPrompt);
         frame.remove(usernamePrompt);
         frame.remove(passwordInput);
@@ -108,7 +117,7 @@ public class DatabaseGUI {
         frame.repaint();
 
         query = new JLabel("What do you want to do?", SwingConstants.CENTER);
-        query.setBounds(100, 30, 200, 30);
+        query.setBounds(150, 60, 250, 30);
 
         selection = new JComboBox<String>();
         selection.addItem("New Playlist");
@@ -116,9 +125,9 @@ public class DatabaseGUI {
         selection.addItem("Auto Playlist Builder");
         selection.addItem("Purge Playlist");
         selection.addItem("Join Playlists");
-        selection.setBounds(100, 80, 200, 30);
-        submit.setBounds(145, 140, 110, 30);
-        back.setBounds(145, 180, 110, 30);
+        selection.setBounds(150, 110, 250, 30);
+        submit.setBounds(210, 170, 130, 35);
+        back.setBounds(210, 215, 130, 35);
 
         for (ActionListener a : submit.getActionListeners()) {
             submit.removeActionListener(a);
@@ -127,32 +136,39 @@ public class DatabaseGUI {
 
         frame.add(selection);
         frame.add(query);
+
+        // ensure components are updated when going to home screen
+        frame.revalidate();
+        frame.repaint();
     }
 
-    public void OnPlaylist(){
+    public void OnPlaylist() {
         frame.remove(selection);
         frame.remove(query);
         frame.repaint();
         frame.add(back);
 
         idPrompt = new JLabel("User ID: ", SwingConstants.CENTER);
-        idPrompt.setBounds(50, 50, 80, 30);
+        idPrompt.setBounds(80, 80, 100, 30);
         playlistNamePrompt = new JLabel("Playlist Name: ", SwingConstants.CENTER);
-        playlistNamePrompt.setBounds(50, 90, 100, 30);
+        playlistNamePrompt.setBounds(80, 130, 120, 30);
 
         idInput = new JTextField(20);
         idInput.setFont(new Font("Monospaced", Font.PLAIN, 12));
         idInput.setForeground(Color.BLACK);
         idInput.setBackground(Color.WHITE);
         idInput.setEditable(true);
-        idInput.setBounds(160, 50, 180, 30); // Set consistent size
-        
+        idInput.setBounds(210, 80, 220, 30); // set consistent width with playlist name input
+
         playlistNameInput = new JTextField(20);
         playlistNameInput.setFont(new Font("Monospaced", Font.PLAIN, 12));
         playlistNameInput.setForeground(Color.BLACK);
         playlistNameInput.setBackground(Color.WHITE);
         playlistNameInput.setEditable(true);
-        playlistNameInput.setBounds(160, 90, 180, 30); // Set consistent size
+        playlistNameInput.setBounds(210, 130, 220, 30); // set consistent width with user id input
+
+        submit.setBounds(210, 190, 130, 35);
+        back.setBounds(210, 235, 130, 35);
 
         for (ActionListener a : submit.getActionListeners()) {
             submit.removeActionListener(a);
@@ -171,25 +187,26 @@ public class DatabaseGUI {
         frame.getContentPane().removeAll();
 
         JLabel title = new JLabel("Playlist Stats", SwingConstants.CENTER);
-        title.setBounds(120, 10, 200, 30);
+        title.setBounds(170, 20, 220, 30);
         title.setFont(new Font("Monospaced", Font.BOLD, 16));
 
-        idPrompt = new JLabel("User ID:", SwingConstants.CENTER);
-        idPrompt.setBounds(50, 50, 80, 30);
+        // reuse playlist name and id inputs from create playlist screen for stats input
+        idPrompt = new JLabel("User ID:", SwingConstants.RIGHT);
+        idPrompt.setBounds(70, 70, 110, 30);
 
-        playlistNamePrompt = new JLabel("Playlist:", SwingConstants.CENTER);
-        playlistNamePrompt.setBounds(50, 90, 80, 30);
+        playlistNamePrompt = new JLabel("Playlist Name:", SwingConstants.RIGHT);
+        playlistNamePrompt.setBounds(70, 115, 110, 30);
 
         idInput = new JTextField();
-        idInput.setBounds(140, 50, 180, 30);
+        idInput.setBounds(190, 70, 220, 30);
 
         playlistNameInput = new JTextField();
-        playlistNameInput.setBounds(140, 90, 180, 30);
+        playlistNameInput.setBounds(190, 115, 220, 30);
 
         JButton loadBtn = new JButton("Load");
-        loadBtn.setBounds(220, 130, 100, 30);
+        loadBtn.setBounds(290, 165, 120, 35);
 
-        back.setBounds(100, 130, 100, 30);
+        back.setBounds(150, 165, 120, 35);
 
         loadBtn.addActionListener(new playlistStatsListener());
         back.addActionListener(new backListener());
@@ -210,7 +227,7 @@ public class DatabaseGUI {
 
         frame.getContentPane().removeAll();
 
-        String[] columns = {"Song", "Plays", "Skips", "Last Played"};
+        String[] columns = { "Song", "Plays", "Skips", "Last Played" };
 
         Object[][] data = new Object[stats.size()][4];
 
@@ -229,14 +246,15 @@ public class DatabaseGUI {
         table.setRowHeight(22);
         table.setEnabled(false); // read-only
 
+        // add a scroll pane in case of many songs
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBounds(50, 40, 310, 160);
+        scrollPane.setBounds(40, 50, 470, 200);
 
         JLabel title = new JLabel("Playlist Stats", SwingConstants.CENTER);
-        title.setBounds(120, 10, 200, 25);
+        title.setBounds(170, 15, 220, 30);
 
         JButton backBtn = new JButton("Back");
-        backBtn.setBounds(140, 210, 120, 30);
+        backBtn.setBounds(210, 265, 130, 35);
 
         backBtn.addActionListener(e -> {
             frame.getContentPane().removeAll();
@@ -252,57 +270,57 @@ public class DatabaseGUI {
         frame.repaint();
     }
 
-    public void OnPlaylistBuilder(){
+    public void OnPlaylistBuilder() {
         frame.remove(selection);
         frame.remove(query);
         frame.remove(submit);
         frame.repaint();
 
-        idPrompt = new JLabel("User ID: ", SwingConstants.CENTER);
-        idPrompt.setBounds(50, 20, 80, 30);
-        artist1Prompt = new JLabel("Artist 1: ", SwingConstants.CENTER);
-        artist1Prompt.setBounds(50, 90, 100, 30);
-        artist2Prompt = new JLabel("Artist 2: ", SwingConstants.CENTER);
-        artist2Prompt.setBounds(50, 120, 100, 30);
-        artist3Prompt = new JLabel("Artist 3: ", SwingConstants.CENTER);
-        artist3Prompt.setBounds(50, 150, 100, 30);
+        idPrompt = new JLabel("User ID: ", SwingConstants.RIGHT);
+        idPrompt.setBounds(80, 30, 110, 30);
+        artist1Prompt = new JLabel("Artist 1: ", SwingConstants.RIGHT);
+        artist1Prompt.setBounds(80, 110, 110, 30);
+        artist2Prompt = new JLabel("Artist 2: ", SwingConstants.RIGHT);
+        artist2Prompt.setBounds(80, 150, 110, 30);
+        artist3Prompt = new JLabel("Artist 3: ", SwingConstants.RIGHT);
+        artist3Prompt.setBounds(80, 190, 110, 30);
 
         idInput = new JTextField(20);
         idInput.setFont(new Font("Monospaced", Font.PLAIN, 12));
         idInput.setForeground(Color.BLACK);
         idInput.setBackground(Color.WHITE);
         idInput.setEditable(true);
-        idInput.setBounds(160, 20, 180, 30);
+        idInput.setBounds(200, 30, 220, 30);
 
-        playlistNamePrompt = new JLabel("Playlist Name: ", SwingConstants.CENTER);
-        playlistNamePrompt.setBounds(50, 50, 100, 30);
+        playlistNamePrompt = new JLabel("Playlist Name: ", SwingConstants.RIGHT);
+        playlistNamePrompt.setBounds(80, 70, 110, 30);
 
         playlistNameInput = new JTextField(20);
-        playlistNameInput.setBounds(160, 50, 180, 30);
+        playlistNameInput.setBounds(200, 70, 220, 30);
 
         artist1Input = new JTextField(20);
         artist1Input.setFont(new Font("Monospaced", Font.PLAIN, 12));
         artist1Input.setForeground(Color.BLACK);
         artist1Input.setBackground(Color.WHITE);
         artist1Input.setEditable(true);
-        artist1Input.setBounds(160, 90, 180, 30);
+        artist1Input.setBounds(200, 110, 220, 30);
 
         artist2Input = new JTextField(20);
         artist2Input.setFont(new Font("Monospaced", Font.PLAIN, 12));
         artist2Input.setForeground(Color.BLACK);
         artist2Input.setBackground(Color.WHITE);
         artist2Input.setEditable(true);
-        artist2Input.setBounds(160, 120, 180, 30);
+        artist2Input.setBounds(200, 150, 220, 30);
 
         artist3Input = new JTextField(20);
         artist3Input.setFont(new Font("Monospaced", Font.PLAIN, 12));
         artist3Input.setForeground(Color.BLACK);
         artist3Input.setBackground(Color.WHITE);
         artist3Input.setEditable(true);
-        artist3Input.setBounds(160, 150, 180, 30);
+        artist3Input.setBounds(200, 190, 220, 30);
 
-        submit.setBounds(220, 190, 100, 30);
-        back.setBounds(100, 190, 100, 30);
+        submit.setBounds(300, 245, 120, 35);
+        back.setBounds(150, 245, 120, 35);
 
         for (ActionListener a : submit.getActionListeners()) {
             submit.removeActionListener(a);
@@ -329,24 +347,24 @@ public class DatabaseGUI {
         frame.getContentPane().removeAll();
         frame.repaint();
 
-        JLabel userIdLabel = new JLabel("User ID:", SwingConstants.CENTER);
-        userIdLabel.setBounds(60, 40, 100, 30);
+        JLabel userIdLabel = new JLabel("User ID:", SwingConstants.RIGHT);
+        userIdLabel.setBounds(80, 70, 120, 30);
 
         JTextField userIdInput = new JTextField();
-        userIdInput.setBounds(170, 40, 150, 30);
+        userIdInput.setBounds(210, 70, 200, 30);
 
-        JLabel playlistIdLabel = new JLabel("Playlist ID:", SwingConstants.CENTER);
-        playlistIdLabel.setBounds(60, 80, 100, 30);
+        JLabel playlistIdLabel = new JLabel("Playlist ID:", SwingConstants.RIGHT);
+        playlistIdLabel.setBounds(80, 120, 120, 30);
 
         JTextField playlistIdInput = new JTextField();
-        playlistIdInput.setBounds(170, 80, 150, 30);
+        playlistIdInput.setBounds(210, 120, 200, 30);
 
         JButton submitBtn = new JButton("Purge");
-        submitBtn.setBounds(130, 130, 150, 35);
+        submitBtn.setBounds(200, 180, 150, 35);
         submitBtn.setBackground(Color.RED);
 
         JButton backBtn = new JButton("Back");
-        backBtn.setBounds(130, 180, 150, 30);
+        backBtn.setBounds(200, 225, 150, 30);
 
         submitBtn.addActionListener(e -> {
             try {
@@ -385,7 +403,7 @@ public class DatabaseGUI {
         frame.repaint();
 
         JLabel title = new JLabel("Purge Results", SwingConstants.CENTER);
-        title.setBounds(90, 20, 240, 30);
+        title.setBounds(150, 20, 250, 30);
         title.setFont(new Font("Segoe UI", Font.BOLD, 20));
         title.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
 
@@ -403,7 +421,7 @@ public class DatabaseGUI {
         }
 
         JScrollPane scrollPane = new JScrollPane(textArea);
-        scrollPane.setBounds(60, 60, 300, 150);
+        scrollPane.setBounds(80, 65, 390, 190);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
         scrollPane.getVerticalScrollBar().setUI(new javax.swing.plaf.basic.BasicScrollBarUI() {
             @Override
@@ -414,7 +432,7 @@ public class DatabaseGUI {
         });
 
         JButton continueBtn = new JButton("Continue");
-        continueBtn.setBounds(130, 220, 150, 35);
+        continueBtn.setBounds(200, 270, 150, 35);
 
         continueBtn.addActionListener(e -> {
             frame.getContentPane().removeAll();
@@ -435,11 +453,11 @@ public class DatabaseGUI {
         frame.getContentPane().removeAll();
 
         songDisplay = new JLabel("", SwingConstants.CENTER);
-        songDisplay.setBounds(90, 40, 240, 30);
+        songDisplay.setBounds(130, 70, 300, 35);
         songDisplay.setFont(new Font("Monospaced", Font.BOLD, 18));
 
         artistDisplay = new JLabel("", SwingConstants.CENTER);
-        artistDisplay.setBounds(90, 60, 240, 30);
+        artistDisplay.setBounds(130, 110, 300, 30);
         artistDisplay.setFont(new Font("Monospaced", Font.PLAIN, 14));
 
         acceptBtn = new JButton("Accept");
@@ -448,12 +466,12 @@ public class DatabaseGUI {
         rejectBtn.setBackground(Color.red);
         finishBtn = new JButton("Finish");
 
-        acceptBtn.setBounds(80, 120, 120, 35);
+        acceptBtn.setBounds(100, 180, 140, 40);
         acceptBtn.setBorder(BorderFactory.createLineBorder(new Color(39, 174, 96), 4, false));
-        rejectBtn.setBounds(220, 120, 120, 35);
+        rejectBtn.setBounds(310, 180, 140, 40);
         rejectBtn.setBorder(BorderFactory.createLineBorder(new Color(192, 57, 43), 4, false));
-        
-        finishBtn.setBounds(150, 170, 120, 35);
+
+        finishBtn.setBounds(205, 235, 140, 35);
 
         acceptBtn.addActionListener(new acceptListener());
         rejectBtn.addActionListener(new rejectListener());
@@ -490,45 +508,45 @@ public class DatabaseGUI {
         artistDisplay.setText(song.getSong().getArtist());
     }
 
-      public void OnJoinPlaylists() {
+    public void OnJoinPlaylists() {
         frame.getContentPane().removeAll();
         frame.repaint();
 
-        JLabel user1Label = new JLabel("User 1 ID:", SwingConstants.CENTER);
-        user1Label.setBounds(50, 30, 100, 30);
+        JLabel user1Label = new JLabel("User 1 ID:", SwingConstants.RIGHT);
+        user1Label.setBounds(70, 30, 120, 30);
 
         JTextField user1Input = new JTextField();
-        user1Input.setBounds(160, 30, 180, 30);
+        user1Input.setBounds(200, 30, 200, 30);
 
-        JLabel playlist1Label = new JLabel("Playlist 1 ID:", SwingConstants.CENTER);
-        playlist1Label.setBounds(50, 70, 100, 30);
+        JLabel playlist1Label = new JLabel("Playlist 1 ID:", SwingConstants.RIGHT);
+        playlist1Label.setBounds(70, 70, 120, 30);
 
         JTextField playlist1Input = new JTextField();
-        playlist1Input.setBounds(160, 70, 180, 30);
+        playlist1Input.setBounds(200, 70, 200, 30);
 
-        JLabel user2Label = new JLabel("User 2 ID:", SwingConstants.CENTER);
-        user2Label.setBounds(50, 110, 100, 30);
+        JLabel user2Label = new JLabel("User 2 ID:", SwingConstants.RIGHT);
+        user2Label.setBounds(70, 110, 120, 30);
 
         JTextField user2Input = new JTextField();
-        user2Input.setBounds(160, 110, 180, 30);
+        user2Input.setBounds(200, 110, 200, 30);
 
-        JLabel playlist2Label = new JLabel("Playlist 2 ID:", SwingConstants.CENTER);
-        playlist2Label.setBounds(50, 150, 100, 30);
+        JLabel playlist2Label = new JLabel("Playlist 2 ID:", SwingConstants.RIGHT);
+        playlist2Label.setBounds(70, 150, 120, 30);
 
         JTextField playlist2Input = new JTextField();
-        playlist2Input.setBounds(160, 150, 180, 30);
+        playlist2Input.setBounds(200, 150, 200, 30);
 
-        JLabel newNameLabel = new JLabel("New Playlist Name:", SwingConstants.CENTER);
-        newNameLabel.setBounds(30, 190, 130, 30);
+        JLabel newNameLabel = new JLabel("New Playlist Name:", SwingConstants.RIGHT);
+        newNameLabel.setBounds(70, 190, 120, 30);
 
         JTextField newNameInput = new JTextField();
-        newNameInput.setBounds(160, 190, 180, 30);
+        newNameInput.setBounds(200, 190, 200, 30);
 
         JButton joinBtn = new JButton("Join");
-        joinBtn.setBounds(140, 230, 150, 35);
+        joinBtn.setBounds(200, 240, 150, 35);
 
         JButton backBtn = new JButton("Back");
-        backBtn.setBounds(140, 270, 150, 30);
+        backBtn.setBounds(200, 285, 150, 30);
 
         joinBtn.addActionListener(e -> {
             try {
@@ -590,7 +608,7 @@ public class DatabaseGUI {
         frame.repaint();
 
         JLabel title = new JLabel("Joined Playlist", SwingConstants.CENTER);
-        title.setBounds(90, 20, 240, 30);
+        title.setBounds(150, 20, 250, 30);
         title.setFont(new Font("Segoe UI", Font.BOLD, 18));
 
         JTextArea textArea = new JTextArea();
@@ -606,10 +624,10 @@ public class DatabaseGUI {
         }
 
         JScrollPane scrollPane = new JScrollPane(textArea);
-        scrollPane.setBounds(60, 60, 300, 150);
+        scrollPane.setBounds(80, 65, 390, 190);
 
         JButton doneBtn = new JButton("Done");
-        doneBtn.setBounds(130, 220, 150, 35);
+        doneBtn.setBounds(200, 270, 150, 35);
 
         doneBtn.addActionListener(e -> {
             frame.getContentPane().removeAll();
@@ -678,68 +696,68 @@ public class DatabaseGUI {
 
     class submitLogin implements ActionListener {
         @Override
-        public void actionPerformed(ActionEvent event){
+        public void actionPerformed(ActionEvent event) {
 
             String user = usernameInput.getText().trim();
             String pass = new String(passwordInput.getPassword()).trim();
 
             // Validate input
-            if(user.isEmpty() || pass.isEmpty()){
-                JOptionPane.showMessageDialog(frame, 
-                    "Please enter database username and password.",
-                    "Missing Input",
-                    JOptionPane.WARNING_MESSAGE);
+            if (user.isEmpty() || pass.isEmpty()) {
+                JOptionPane.showMessageDialog(frame,
+                        "Please enter database username and password.",
+                        "Missing Input",
+                        JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
             try {
-                DataMgr.initialize(user, pass); 
+                DataMgr.initialize(user, pass);
 
                 System.out.println("Connected to database successfully!");
-                JOptionPane.showMessageDialog(frame, 
-                    "Successfully Connected", 
-                    "Login", 
-                    JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(frame,
+                        "Successfully Connected",
+                        "Login",
+                        JOptionPane.INFORMATION_MESSAGE);
 
                 OnLogin();
 
             } catch (Exception e) {
                 System.out.println("Connection failed: " + e.getMessage());
-                JOptionPane.showMessageDialog(frame, 
-                    e.getMessage(), 
-                    "Connection Error", 
-                    JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(frame,
+                        e.getMessage(),
+                        "Connection Error",
+                        JOptionPane.ERROR_MESSAGE);
             }
         }
     }
 
-    class selectionListener implements ActionListener{
+    class selectionListener implements ActionListener {
         @Override
-        public void actionPerformed(ActionEvent event){
+        public void actionPerformed(ActionEvent event) {
             try {
-            if("New Playlist".equals(selection.getSelectedItem())){
-                System.out.println("Selected New Playlist");
-                OnPlaylist();
-            } else if("Get Playlist Stats".equals(selection.getSelectedItem())){
-                System.out.println("Selected Get Playlist Stats");
-                OnPlaylistStats();
-            } else if ("Auto Playlist Builder".equals(selection.getSelectedItem())){
-                System.out.println("Selected Auto Playlist Builder");
-                OnPlaylistBuilder();
-            } else if ("Purge Playlist".equals(selection.getSelectedItem())) {
-                System.out.println("Selected Purge Playlist");
-                OnPurgePlaylist();
-            } else if ("Join Playlists".equals(selection.getSelectedItem())) {
-                System.out.println("Selected Join Playlists");
-                OnJoinPlaylists();
-            }
+                if ("New Playlist".equals(selection.getSelectedItem())) {
+                    System.out.println("Selected New Playlist");
+                    OnPlaylist();
+                } else if ("Get Playlist Stats".equals(selection.getSelectedItem())) {
+                    System.out.println("Selected Get Playlist Stats");
+                    OnPlaylistStats();
+                } else if ("Auto Playlist Builder".equals(selection.getSelectedItem())) {
+                    System.out.println("Selected Auto Playlist Builder");
+                    OnPlaylistBuilder();
+                } else if ("Purge Playlist".equals(selection.getSelectedItem())) {
+                    System.out.println("Selected Purge Playlist");
+                    OnPurgePlaylist();
+                } else if ("Join Playlists".equals(selection.getSelectedItem())) {
+                    System.out.println("Selected Join Playlists");
+                    OnJoinPlaylists();
+                }
 
-        } catch (Exception e) {
-            System.out.println("Selection Failed failed: " + e.getMessage());
-            JOptionPane.showMessageDialog(frame, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            
-            return;
-        }
+            } catch (Exception e) {
+                System.out.println("Selection Failed failed: " + e.getMessage());
+                JOptionPane.showMessageDialog(frame, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+
+                return;
+            }
         }
     }
 
@@ -763,13 +781,13 @@ public class DatabaseGUI {
         }
     }
 
-    class playlistListener implements ActionListener{
+    class playlistListener implements ActionListener {
         @Override
-        public void actionPerformed(ActionEvent event){
+        public void actionPerformed(ActionEvent event) {
             try {
-            // Get user input
+                // Get user input
                 int userId = Integer.parseInt(idInput.getText());
-                
+
                 String playlistName = playlistNameInput.getText();
 
                 // user inputs go to controller
@@ -777,20 +795,22 @@ public class DatabaseGUI {
                 controller.createPlaylist(userId, playlistName);
 
                 // Show result
-                JOptionPane.showMessageDialog(frame, playlistName + " created successfully!", "Create Playlist", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(frame, playlistName + " created successfully!", "Create Playlist",
+                        JOptionPane.INFORMATION_MESSAGE);
                 System.out.println(playlistName + " created successfully!");
-        } catch (Exception e) {
-            System.out.println("Error Creating Playlist: " + e.getMessage());
-            JOptionPane.showMessageDialog(frame, e.getMessage(), "Error Creating Playlist:", JOptionPane.ERROR_MESSAGE);
-            
-            return;
-        }
+            } catch (Exception e) {
+                System.out.println("Error Creating Playlist: " + e.getMessage());
+                JOptionPane.showMessageDialog(frame, e.getMessage(), "Error Creating Playlist:",
+                        JOptionPane.ERROR_MESSAGE);
+
+                return;
+            }
         }
     }
 
     class autoPlaylistListener implements ActionListener {
         @Override
-        public void actionPerformed(ActionEvent event){
+        public void actionPerformed(ActionEvent event) {
             try {
                 int userId = Integer.parseInt(idInput.getText());
 
@@ -842,7 +862,7 @@ public class DatabaseGUI {
         }
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         new DatabaseGUI();
     }
 
