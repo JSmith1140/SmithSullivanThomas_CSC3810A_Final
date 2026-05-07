@@ -12,9 +12,11 @@ Workflow 5: Join Two Users' Playlists
 
 # How To Run
 
-Run MusicPlayer.sql
-Run MusicPlayInsertData.sql (if you want user input)
-Run DatabaseGUI.java
+-Run MusicPlayer.sql
+
+-Run MusicPlayInsertData.sql (if you want user input)
+
+-Run DatabaseGUI.java
 
 # Authors:
 - Jacob Smith
