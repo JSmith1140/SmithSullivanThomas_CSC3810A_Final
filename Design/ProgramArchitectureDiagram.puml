@@ -1,0 +1,131 @@
+@startuml Program Architecture Diagram 
+title Music System Program Architecture Diagram
+
+package "Presentation Layer" {
+    class DatabaseGUI {
+        + DatabaseGUI()
+        + OnLogin() 
+        + OnPlaylist() 
+        + OnPlaylistStats() 
+        + showStatsTable() 
+        + OnPlaylistBuilder()
+        + OnPurgePlaylist()
+        + showPurgeResultsScreen()
+        + showRecommendationScreen() 
+        + showNextSong() 
+        + OnJoinPlaylists()
+        + showJoinResultsScreen()
+        acceptListener()
+        rejectListener()
+        finishListener()
+        submitLogin()
+        selectionListener()
+        backListener()
+        playlistListener()
+        autoPlaylistListener()
+        playlistStatsListener()
+        + main()
+    }
+}
+
+package "Business Logic Layer" {
+    class AutoPlaylistController {
+        + buildAutoPlaylist()
+    }
+    class JoinPlaylistController {
+        + buildJointPlaylist()
+    }
+    class PlaylistController {
+        + createPlaylist()
+        + addSongToPlaylist()
+        + blacklistSong()
+        + genreStats() 
+        + playlistStats()
+    }
+    class PlaylistStat {
+        + PlaylistStat()
+        + getSongName()
+        + getPlays()
+        + getSkips()
+        + getLastPlayed()
+    }
+    class PurgeController {
+        + purgePlaylist()
+        - isOlderThanMonths()
+    }
+    class ScoredSongs {
+        + ScoredSong()
+        + getSong()
+        + getScore()
+    }
+    class SongCandidate {
+        + SongCandidate()
+        + getSongId()
+        + getSongName()
+        + getSource()
+        + getArtist()
+        + getPlays()
+        + getSkips()
+        + getLastPlayed()
+    }
+}
+
+package "Data Access Layer" {
+    class DataMgr {
+        + initialize()
+        + getConnection()
+        + closeConnection()
+    }
+    class GenreStatsDataProvider {
+        + getGenreStats()
+    }
+    class PlaylistDataProvider {
+        + createPlaylist()
+        + addSongToPlaylist()
+        + blacklistSong()
+        + getCandidateSongs()
+        + getBlacklist()
+        + getUserArtistScores()
+        + getUserGenreScores()
+        + getArtistIdBySong()
+        + getGenreIdBySong()
+        + getPlaylistStats()
+    }
+    class PurgeDataProvider {
+        - callWithUserId()
+        + getPlaylistSongs()
+        + getSongStats()
+        + getGenreStats()
+        + getArtistStats()
+        + getBlacklist()
+        + getGenreOfSong()
+        + getArtistOfSong()
+        + getPlaylistsByUser()
+        + removeSongFromPlaylist()
+    }
+}
+
+'Relationships
+DatabaseGUI --> PlaylistController
+DatabaseGUI --> AutoPlaylistController
+DatabaseGUI --> JoinPlaylistController
+DatabaseGUI --> PurgeController
+
+PlaylistController --> PlaylistDataProvider
+PlaylistController --> GenreStatsDataProvider
+AutoPlaylistController --> PlaylistDataProvider
+JoinPlaylistController --> PurgeDataProvider
+PurgeController --> PurgeDataProvider
+
+PlaylistDataProvider --> DataMgr
+GenreStatsDataProvider --> DataMgr
+PurgeDataProvider --> DataMgr
+
+DatabaseGUI --> PlaylistStat
+DatabaseGUI --> SongCandidate
+DatabaseGUI --> ScoredSongs
+
+AutoPlaylistController --> ScoredSongs
+JoinPlaylistController --> SongCandidate
+
+@enduml
