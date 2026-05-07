@@ -108,6 +108,9 @@ public class DatabaseGUI {
         frame.setVisible(true);
     }
 
+    /***
+     * Main page
+     */
     public void OnLogin() {
         frame.remove(passwordPrompt);
         frame.remove(usernamePrompt);
@@ -148,6 +151,9 @@ public class DatabaseGUI {
         frame.repaint();
     }
 
+    /***
+     * Playlist page
+     */
     public void OnPlaylist() {
         frame.remove(loginTitle);
         frame.remove(selection);
@@ -194,6 +200,9 @@ public class DatabaseGUI {
         frame.add(playlistNameInput);
     }
 
+    /***
+     * playlist stats
+     */
     public void OnPlaylistStats() {
 
         frame.getContentPane().removeAll();
@@ -235,6 +244,10 @@ public class DatabaseGUI {
         frame.repaint();
     }
 
+    /**
+     * shows stats table
+     * @param stats
+     */
     public void showStatsTable(List<PlaylistStat> stats) {
 
         frame.getContentPane().removeAll();
@@ -282,6 +295,9 @@ public class DatabaseGUI {
         frame.repaint();
     }
 
+    /**
+     * auto playlist builder
+     */
     public void OnPlaylistBuilder() {
         frame.remove(selection);
         frame.remove(query);
@@ -359,6 +375,9 @@ public class DatabaseGUI {
         frame.add(back);
     }
 
+    /***
+     * purge playlist gui
+     */
     public void OnPurgePlaylist() {
 
         frame.getContentPane().removeAll();
@@ -420,6 +439,10 @@ public class DatabaseGUI {
         frame.repaint();
     }
 
+    /***
+     * show purge results screen
+     * @param removedSongs
+     */
     public void showPurgeResultsScreen(List<String> removedSongs) {
 
         frame.getContentPane().removeAll();
@@ -471,6 +494,9 @@ public class DatabaseGUI {
         frame.repaint();
     }
 
+    /***
+     * show the reecommendation screen
+     */
     public void showRecommendationScreen() {
 
         frame.getContentPane().removeAll();
@@ -512,6 +538,9 @@ public class DatabaseGUI {
         frame.repaint();
     }
 
+    /***
+     * show next song
+     */
     public void showNextSong() {
         if (recommendations == null || currentIndex >= recommendations.size()) {
             JOptionPane.showMessageDialog(frame, "No more songs!");
@@ -531,6 +560,9 @@ public class DatabaseGUI {
         artistDisplay.setText(song.getSong().getArtist());
     }
 
+    /***
+     * join playlists screen
+     */
     public void OnJoinPlaylists() {
         frame.getContentPane().removeAll();
         frame.repaint();
@@ -635,6 +667,10 @@ public class DatabaseGUI {
         frame.repaint();
     }
 
+    /***
+     * show join results screen
+     * @param songs
+     */
     public void showJoinResultsScreen(List<SongCandidate> songs) {
 
         frame.getContentPane().removeAll();
@@ -676,6 +712,9 @@ public class DatabaseGUI {
         frame.repaint();
     }
 
+    /***
+     * accept listener
+     */
     class acceptListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -694,6 +733,9 @@ public class DatabaseGUI {
         }
     }
 
+    /***
+     * reject listener
+     */
     class rejectListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -713,6 +755,9 @@ public class DatabaseGUI {
         }
     }
 
+    /***
+     * finish listener
+     */
     class finishListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -727,6 +772,9 @@ public class DatabaseGUI {
         }
     }
 
+    /***
+     * submit login
+     */
     class submitLogin implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent event) {
@@ -764,6 +812,9 @@ public class DatabaseGUI {
         }
     }
 
+    /***
+     * selection listener
+     */
     class selectionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent event) {
@@ -794,6 +845,9 @@ public class DatabaseGUI {
         }
     }
 
+    /***
+     * back listener
+     */
     class backListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent event) {
@@ -814,6 +868,9 @@ public class DatabaseGUI {
         }
     }
 
+    /***
+     * playlist listener
+     */
     class playlistListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent event) {
@@ -841,6 +898,9 @@ public class DatabaseGUI {
         }
     }
 
+    /***
+     * auto playlist listener
+     */
     class autoPlaylistListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent event) {
@@ -877,6 +937,9 @@ public class DatabaseGUI {
         }
     }
 
+    /***
+     * playlist stats listener
+     */
     class playlistStatsListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
