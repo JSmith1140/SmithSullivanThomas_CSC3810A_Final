@@ -99,7 +99,6 @@ public class JoinPlaylistController {
 
             // if either user has less than 20 plays remove it
             if (plays1 < 20 || plays2 < 20) {
-                System.out.println(lastPlayed2);
                 System.out.println("Removed (insufficient plays)");
                 continue;
             }
