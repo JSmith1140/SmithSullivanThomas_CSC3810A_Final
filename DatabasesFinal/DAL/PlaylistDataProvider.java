@@ -18,6 +18,13 @@ import java.sql.CallableStatement;
 
 public class PlaylistDataProvider {
     
+    /***
+     * method to create playlist
+     * @param userId
+     * @param playlistName
+     * @return
+     * @throws SQLException
+     */
     public int createPlaylist(int userId, String playlistName) throws SQLException {
 
         Connection conn = DataMgr.getConnection();
@@ -36,6 +43,12 @@ public class PlaylistDataProvider {
         }
     }
 
+    /***
+     * method to add song to playlist
+     * @param playlistId
+     * @param songId
+     * @throws SQLException
+     */
     public void addSongToPlaylist(int playlistId, int songId) throws SQLException{
         
         Connection conn = DataMgr.getConnection();
@@ -49,6 +62,12 @@ public class PlaylistDataProvider {
         }
     }
 
+    /***
+     * method to blacklist song
+     * @param userId
+     * @param songId
+     * @throws SQLException
+     */
     public void blacklistSong(int userId, int songId) throws SQLException{
 
         Connection conn = DataMgr.getConnection();
@@ -62,6 +81,15 @@ public class PlaylistDataProvider {
         }
     }
 
+    /***
+     * method to get candidate song
+     * @param userId
+     * @param artist1
+     * @param artist2
+     * @param artist3
+     * @return
+     * @throws SQLException
+     */
     public List<SongCandidate> getCandidateSongs(int userId, String artist1, String artist2, String artist3) throws SQLException {
 
         Connection conn = DataMgr.getConnection();
@@ -94,6 +122,12 @@ public class PlaylistDataProvider {
         return songs;
     }
 
+    /***
+     * method to get blacklist song
+     * @param userId
+     * @return
+     * @throws SQLException
+     */
     public Set<Integer> getBlacklist(int userId) throws SQLException {
 
         Connection conn = DataMgr.getConnection();
@@ -114,6 +148,12 @@ public class PlaylistDataProvider {
         return blacklist;
     }
 
+    /***
+     * method to get user artist scores
+     * @param userId
+     * @return
+     * @throws SQLException
+     */
     public Map<Integer, Integer> getUserArtistScores(int userId) throws SQLException {
 
         Connection conn = DataMgr.getConnection();
@@ -137,6 +177,12 @@ public class PlaylistDataProvider {
         return map;
     }
 
+    /***
+     * method to get user genre scores
+     * @param userId
+     * @return
+     * @throws SQLException
+     */
     public Map<Integer, Integer> getUserGenreScores(int userId) throws SQLException {
 
         Connection conn = DataMgr.getConnection();
@@ -160,6 +206,12 @@ public class PlaylistDataProvider {
         return map;
     }
 
+    /***
+     * method to get artist id by song
+     * @param songId
+     * @return
+     * @throws SQLException
+     */
     public int getArtistIdBySong(int songId) throws SQLException {
 
         Connection conn = DataMgr.getConnection();
@@ -178,6 +230,12 @@ public class PlaylistDataProvider {
         return 0;
     }
 
+    /***
+     * method to get genre id by song
+     * @param songId
+     * @return
+     * @throws SQLException
+     */
     public int getGenreIdBySong(int songId) throws SQLException {
 
         Connection conn = DataMgr.getConnection();
@@ -196,6 +254,13 @@ public class PlaylistDataProvider {
         return 0;
     }
 
+    /***
+     * method to get playlist stats
+     * @param userId
+     * @param playlistName
+     * @return
+     * @throws SQLException
+     */
     public List<PlaylistStat> getPlaylistStats(int userId, String playlistName) throws SQLException {
 
         Connection conn = DataMgr.getConnection();
