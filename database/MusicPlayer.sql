@@ -49,6 +49,8 @@ CREATE TABLE IF NOT EXISTS Users (
     CONSTRAINT unique_user UNIQUE (UserName)
 );
 
+INSERT INTO Users (UserName) VALUES ('Test');
+
 CREATE TABLE IF NOT EXISTS UserSong (
 	UserId INT NOT NULL,
 	SongId INT NOT NULL,
