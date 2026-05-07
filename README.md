@@ -10,6 +10,8 @@ Workflow 4: Playlist Purging
 
 Workflow 5: Join Two Users' Playlists
 
+# How To Run
+
 # Authors:
 - Jacob Smith
 - Olivia Sullivan
