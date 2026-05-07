@@ -385,6 +385,48 @@ BEGIN
     LIMIT 1;
 END $$
 
+	
+CREATE PROCEDURE GetPlaylistStats(
+    IN p_userId INT,
+    IN p_playlistName VARCHAR(100)
+)
+BEGIN
+
+    -- Get the playlist ID for this user
+    DECLARE v_playlistId INT;
+
+    SELECT PlaylistId INTO v_playlistId
+    FROM Playlist
+    WHERE UserId = p_userId
+      AND PlaylistName = p_playlistName
+    LIMIT 1;
+
+    -- If playlist doesn't exist, return empty result
+    IF v_playlistId IS NULL THEN
+        SELECT 'Playlist not found for this user' AS Message;
+    ELSE
+
+        SELECT
+            s.SongName,
+            COALESCE(us.Plays, 0) AS Plays,
+            COALESCE(us.TimesSkipped, 0) AS TimesSkipped,
+            us.LastPlayed
+
+        FROM PlaylistSong ps
+        JOIN Song s ON ps.SongId = s.SongId
+
+        LEFT JOIN UserSong us 
+            ON us.SongId = s.SongId 
+            AND us.UserId = p_userId
+
+        WHERE ps.PlaylistId = v_playlistId
+
+        ORDER BY s.SongName;
+
+    END IF;
+
+END $$
+
 
 DELIMITER ;
 
