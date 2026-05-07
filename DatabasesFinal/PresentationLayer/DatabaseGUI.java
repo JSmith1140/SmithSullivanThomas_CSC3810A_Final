@@ -119,7 +119,7 @@ public class DatabaseGUI {
 
         frame.repaint();
 
-        JLabel loginTitle = new JLabel("Music System", SwingConstants.CENTER);
+        loginTitle = new JLabel("Music System", SwingConstants.CENTER);
         loginTitle.setFont(new Font("Monospaced", Font.BOLD, 36));
         loginTitle.setBounds(0, 20, 560, 40);
 
@@ -300,6 +300,7 @@ public class DatabaseGUI {
      */
     public void OnPlaylistBuilder() {
         frame.remove(selection);
+        frame.remove(loginTitle);
         frame.remove(query);
         frame.remove(submit);
         frame.repaint();
