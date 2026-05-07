@@ -1,8 +1,6 @@
 package DatabasesFinal.BLL;
 
 import java.util.List;
-
-import DatabasesFinal.DAL.GenreStatsDataProvider;
 import DatabasesFinal.DAL.PlaylistDataProvider;
 
 public class PlaylistController {
@@ -38,15 +36,6 @@ public class PlaylistController {
      */
     public void blacklistSong(int userId, int songId) throws Exception {
         playlistDP.blacklistSong(userId, songId);
-    }
-
-    /***
-     * genre stats
-     * @param userId
-     * @throws Exception
-     */
-    public void genreStats(int userId) throws Exception {
-        GenreStatsDataProvider.getGenreStats(userId);
     }
 
     /***
