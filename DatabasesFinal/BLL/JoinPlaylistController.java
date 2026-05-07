@@ -7,17 +7,29 @@ public class JoinPlaylistController {
 
     private PurgeDataProvider purgeDP = new PurgeDataProvider();
 
-    private static final int maxSkips = 25;
-    private static final double maxSkipRatio = 0.5;
+    private static final int maxSkips = 25; // maxskips
+    private static final double maxSkipRatio = 0.5; //maxskipratio
 
+    /***
+     * Method to build a joint playlist
+     * @param user1
+     * @param user2
+     * @param p1
+     * @param p2
+     * @return
+     * @throws Exception
+     */
     public List<SongCandidate> buildJointPlaylist(int user1, int user2, int p1, int p2) throws Exception {
 
+        // get playlist for both users
         Map<Integer, String> playlist1 = purgeDP.getPlaylistSongs(p1);
         Map<Integer, String> playlist2 = purgeDP.getPlaylistSongs(p2);
 
+        // get song stats for both users
         Map<Integer, Object[]> songStats1 = purgeDP.getSongStats(user1);
         Map<Integer, Object[]> songStats2 = purgeDP.getSongStats(user2);
 
+        // place all songs into a hash set
         Set<Integer> allSongs = new HashSet<>();
         allSongs.addAll(playlist1.keySet());
         allSongs.addAll(playlist2.keySet());
@@ -66,22 +78,26 @@ public class JoinPlaylistController {
 
             System.out.println("\nChecking: " + songName);
 
+            // If either user hasn't played the song in a while don't include
             int maxDays = 100;
             if (lastPlayed1 > maxDays || lastPlayed2 > maxDays) {
                 System.out.println("Removed (too old)");
                 continue;
             }
 
+            // if either user has skipped a lot remove it
             if (skips1 >= maxSkips || skips2 >= maxSkips) {
                 System.out.println("Removed (too many skips)");
                 continue;
             }
 
+            // if either users skip ratio is over 50% remove it
             if (plays1 > 0 && skips1 / (double) plays1 > maxSkipRatio || plays2 > 0 && skips2 / (double) plays2 > maxSkipRatio) {
                 System.out.println("Removed (skip ratio)");
                 continue;
             }
 
+            // if either user has less than 20 plays remove it
             if (plays1 < 20 || plays2 < 20) {
                 System.out.println(lastPlayed2);
                 System.out.println("Removed (insufficient plays)");
